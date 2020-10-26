@@ -1,7 +1,7 @@
 # 02456-deep-learning-rl
 Project in Reinforcement Learning for DTU course Deep Learning 02456
 
-Project synopsis. Deadline: Wednesday 2020-11-04. 
+Project synopsis. Deadline: Wednesday November 4th. 
 The synopsis should be approximately half a page  and maximum one page with a project title, motivation, background, milestones and references. 
 It is important that the plan is realistic.
 
