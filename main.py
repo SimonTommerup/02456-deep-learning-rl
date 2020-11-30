@@ -8,6 +8,7 @@ import numpy as np
 from scipy.ndimage.filters import gaussian_filter
 import cv2
 from tqdm import tqdm
+import models
 
 class PolicyLogitsHook():
   def __init__(self, net):
@@ -54,6 +55,10 @@ def upsample_saliency_frame(saliency_frame):
     # resized = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
     ndarr = cv2.resize(ndarr, dsize=(HI_RES_SIZE,HI_RES_SIZE), interpolation=cv2.INTER_LINEAR) #.astype(np.float32)
     return ndarr
+def red_frame():
+    rf = np.ones((512,512))
+    rf = rf * 255.
+    return rf
 
 def gaussian_blur(frame, mask):
     for idx,_ in enumerate(frame):
@@ -100,15 +105,22 @@ use_backgrounds=False
 if __name__ == "__main__":
     env = utils.make_env(num_envs, start_level=num_levels, num_levels=num_levels, use_backgrounds=use_backgrounds)
     obs = env.reset()
-
+    """
+    encoder = models.DQNEncoder(env.observation_space.shape[0], num_features)
+    policy = models.Policy(encoder, num_features, env.action_space.n)
+    policy.load_state_dict(torch.load("2_500_lvls/temp_model.pt"))
+    policy.cuda()
+    policy.eval()
+    """
     encoder = initial.Encoder(env.observation_space.shape[0], num_features)
     policy = initial.Policy(encoder, num_features, env.action_space.n)
-    policy = policy.cuda()
+    policy.cuda()
+    policy.eval()
 
     hook = PolicyLogitsHook(policy)
 
     frames = []
-    for _ in tqdm(range(56)):
+    for _ in tqdm(range(16)):
 
         # Use policy on observation on frame
         action,_,_ = policy.act(obs)
@@ -120,10 +132,19 @@ if __name__ == "__main__":
         sf = saliency_frame(net=policy, hook=hook, logits=logits, frame=obs, pixel_step=4)
         sf = saliency_mode(sf, mode="mean")
         sf = upsample_saliency_frame(sf)
+        print("S MAX:" , np.max(sf))
+        print("S MIN:" , np.max(sf))
+
+        # frame of 255s all over, slight proof of concept :-)
+        rf = red_frame()
 
         # Rendering
         frame = env.render(mode="rgb_array")
-        frame[:,:,0]= frame[:,:,0] + sf
+        print("F MAX:" , np.max(frame))
+        print("F MIN:" , np.max(frame))
+
+        #frame[:,:,0]= frame[:,:,0] + sf
+        frame[:,:,0]= frame[:,:,0] + rf
 
         # Record frame to frames stack
         frame = (torch.Tensor(frame)).byte()
@@ -135,5 +156,5 @@ if __name__ == "__main__":
     frames = torch.stack(frames)
     imageio.mimsave('vid_' + 'slow_saliency_test' + '.mp4', frames, fps=25)
     
-
+    print(max(2,0))
 
