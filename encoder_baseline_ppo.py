@@ -279,7 +279,6 @@ while step < total_steps:
       pi_loss = policy_reward.mean() 
 
       # Clipped value function objective
-      #TODO: Tydeligvis er noget galt. Tjek om det er value clipping, eller udregning af reward?
       clipped_value = b_value + (new_value - b_value).clamp(eps, eps)
       v_surr1 = (new_value - b_returns).pow(2)
       v_surr2 = (clipped_value - b_returns).pow(2)
