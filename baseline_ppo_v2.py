@@ -48,11 +48,11 @@ def save_movie(policy, env_val):
 
 #_______________________________ SET MODELS AND HYPERPARAMETERS _______________________________
 
-name = '0_baseline'
+name = '4_100_lvls_impala'
 
 total_steps = 8e6
 num_envs = 32
-num_levels = 10
+num_levels = 100
 num_steps = 256
 num_epochs = 3
 n_features = 256
