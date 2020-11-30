@@ -63,6 +63,7 @@ lr=5e-4
 use_backgrounds = False
 normalize_reward = False
 use_impala = True
+use_clipped_value = True
 
 
 # Training and validation env
@@ -161,13 +162,14 @@ while step < total_steps:
             pi_loss = policy_reward.mean() 
 
             # Clipped value function objective
-            clipped_value = b_value + (new_value - b_value).clamp(eps, eps)
-            v_surr1 = (new_value - b_returns).pow(2)
-            v_surr2 = (clipped_value - b_returns).pow(2)
-            value_loss = 0.5 * torch.max(v_surr1, v_surr2).mean()
-
-            # clipped_value = (new_value - b_value)**2
-            # value_loss = clipped_value.mean()
+            if use_clipped_value:
+                clipped_value = b_value + (new_value - b_value).clamp(eps, eps)
+                v_surr1 = (new_value - b_returns).pow(2)
+                v_surr2 = (clipped_value - b_returns).pow(2)
+                value_loss = 0.5 * torch.max(v_surr1, v_surr2).mean()
+            else:
+                clipped_value = (new_value - b_value)**2
+                value_loss = clipped_value.mean()
 
             # Entropy loss
             entropy_loss = new_dist.entropy().mean()

@@ -19,7 +19,7 @@ def xavier_uniform_init(module, gain=1.0):
 class Flatten(nn.Module):
     def forward(self, x):
         return x.view(x.size(0), -1)
-        
+
 
 ### NATURE DQN ###
 class DQNEncoder(nn.Module):
@@ -40,7 +40,7 @@ class DQNEncoder(nn.Module):
 
 ### IMPALA ### 
 """
-Implementation inspired by https://github.com/joonleesky/train-procgen-pytorch/blob/master/common/model.py
+Used implementation from https://github.com/joonleesky/train-procgen-pytorch/blob/master/common/model.py
 """
 class ResidualBlock(nn.Module):
     def __init__(self,
