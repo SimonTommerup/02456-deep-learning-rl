@@ -43,7 +43,6 @@ def save_movie(policy, env_val):
     frames = torch.stack(frames)
     imageio.mimsave('vid_' + name + '.mp4', frames, fps=25)
 
-    imageio.mimsave('vid_' + "name" + '.mp4', frames, fps=25)
 
 
 
@@ -92,8 +91,6 @@ storage_val = Storage(env_val.observation_space.shape, num_steps, num_envs)
 # Save rewards for plotting purposeses.
 rewards_train = []
 rewards_val = []
-rewards_train_2 = []
-rewards_val_2 = []
 steps = []
 
 # Define environments 
@@ -236,7 +233,6 @@ while step < total_steps:
     #print("Saving figure")
     # Save final plot.
     plt.savefig('plot_' + name + '.pdf', bbox_inches='tight')
-
 
 print('Completed training!')
 
