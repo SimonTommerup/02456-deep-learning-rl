@@ -11,3 +11,4 @@ Final report deadline January 4rd 2021 23.59. The report should be maximum 6 pag
 
 ### Questions for Nicklas
 - Hvad er "clipped" value function? I paper siger de kun (V_est - V_target)^2
+- Hvad foregår der når 'normalized_reward=True'?
