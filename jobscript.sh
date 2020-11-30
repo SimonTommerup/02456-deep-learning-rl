@@ -3,8 +3,8 @@
 #BSUB -gpu "num=1"
 #BSUB -J ValueClip_test
 #BSUB -n 1
-#BSUB -W 00:30
-#BSUB -u tdheshe@hotmail.com
+#BSUB -W 00:15
+#BSUB -u allanerlang@gmail.com
 #BSUB -B
 #BSUB -N
 #BSUB -R "rusage[mem=32GB]"
