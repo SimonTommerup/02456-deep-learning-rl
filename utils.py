@@ -532,4 +532,8 @@ class TensorEnv(VecEnvWrapper):
 
 	def reset(self):
 		obs = self.venv.reset()
+<<<<<<< HEAD
 		return torch.Tensor(obs)
+=======
+		return torch.Tensor(obs)
+>>>>>>> d1ae2605ce1ab7822641ce41cdae2cfd14a41956
