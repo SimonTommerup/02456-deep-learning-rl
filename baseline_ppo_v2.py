@@ -240,7 +240,7 @@ while step < total_steps:
 print('Completed training!')
 
 # Save model.
-torch.save(policy.state_dict, 'model_' + name + '.pt')
+torch.save(policy.state_dict(), 'model_' + name + '.pt')
 
 # Save rewards.
 temp_dict = {'train_reward': [x.item() for x in rewards_train],
