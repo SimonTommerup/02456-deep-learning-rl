@@ -41,7 +41,6 @@ def save_movie(policy, eval_env):
     frames = torch.stack(frames)
     imageio.mimsave('vid_' + name + '.mp4', frames, fps=25)
 
-    imageio.mimsave('vid_' + "name" + '.mp4', frames, fps=25)
 
 
 
@@ -49,7 +48,7 @@ def save_movie(policy, eval_env):
 
 name = 'test_new_script'
 
-total_steps = 1e6
+total_steps = 0.01e6
 num_envs = 16
 num_levels = 100
 num_steps = 256
@@ -89,8 +88,6 @@ storage = Storage(env.observation_space.shape, num_steps, num_envs)
 # Save rewards for plotting purposeses.
 rewards_train = []
 rewards_val = []
-rewards_train_2 = []
-rewards_val_2 = []
 steps = []
 
 # Define environments 
@@ -197,9 +194,6 @@ while step < total_steps:
     rewards_val.append(torch.stack(temp_val_rewards).mean(1).sum(0))
     steps.append(step)
 
-    rewards_train_2.append(storage.get_reward())
-    rewards_val_2.append(torch.stack(temp_val_rewards).sum(0).mean(0))
-
     # Plot training and validation reward vs baseline.
     clear_output(wait=True)
     plt.subplots(figsize=(10,6))
@@ -216,23 +210,6 @@ while step < total_steps:
     #print("Saving figure")
     # Save final plot.
     plt.savefig('plot_' + name + '.pdf', bbox_inches='tight')
-
-
-    clear_output(wait=True)
-    plt.subplots(figsize=(10,6))
-    plt.plot(step_baseline, mean_rew_baseline, 
-            color="darksalmon", label="Baseline")
-    plt.plot(steps, rewards_train_2, color="darkslategray", 
-            label='Training reward: ' + str(rewards_train_2[-1].item()))
-    plt.plot(steps, rewards_val_2, color="darkolivegreen", 
-            label='Validation reward: ' + str(rewards_val_2[-1].item()))
-    plt.xlabel("steps")
-    plt.ylabel("Mean reward")
-    plt.legend()
-    plt.show()
-    #print("Saving figure")
-    # Save final plot.
-    plt.savefig('plot_2' + name + '.pdf', bbox_inches='tight')
 
 print('Completed training!')
 torch.save(policy.state_dict, 'model_' + name + '.pt')
