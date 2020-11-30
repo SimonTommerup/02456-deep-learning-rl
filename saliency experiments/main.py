@@ -156,5 +156,4 @@ if __name__ == "__main__":
     frames = torch.stack(frames)
     imageio.mimsave('vid_' + 'slow_saliency_test' + '.mp4', frames, fps=25)
     
-    print(max(2,0))
-
+    print(policy.state_dict)
