@@ -48,11 +48,11 @@ def save_movie(policy, env_val):
 
 #_______________________________ SET MODELS AND HYPERPARAMETERS _______________________________
 
-name = '4_100_lvls_impala'
+name = '0_baseline'
 
 total_steps = 8e6
 num_envs = 32
-num_levels = 100
+num_levels = 10
 num_steps = 256
 num_epochs = 3
 n_features = 256
@@ -106,9 +106,9 @@ work_dir = os.path.join(path, name)
 if not(os.path.isdir(work_dir)):
     try:
         os.mkdir(work_dir)
-        os.chdir(work_dir)
     except:
         print("Failed to create model folder.")
+os.chdir(work_dir)
 
 
 # _______________________________ TRAINING _______________________________
@@ -231,10 +231,11 @@ while step < total_steps:
     plt.xlabel("steps")
     plt.ylabel("Mean reward")
     plt.legend()
-    plt.show()
+    #plt.show()
     #print("Saving figure")
     # Save final plot.
     plt.savefig('plot_' + name + '.pdf', bbox_inches='tight')
+    plt.close()
 
 print('Completed training!')
 
