@@ -1,7 +1,9 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import os
 import imageio
+import json
 import matplotlib.pyplot as plt
 from utils import make_env, Storage, orthogonal_init
 from IPython.display import clear_output
@@ -11,8 +13,8 @@ from tqdm import tqdm
 from models import ImpalaModel, DQNEncoder, Policy
 
 
-def save_movie(policy, eval_env):
-    obs = eval_env.reset()
+def save_movie(policy, env_val):
+    obs = env_val.reset()
 
     frames = []
     total_reward = []
@@ -26,11 +28,11 @@ def save_movie(policy, eval_env):
         action, log_prob, value = policy.act(obs)
 
         # Take step in environment
-        obs, reward, done, info = eval_env.step(action)
+        obs, reward, done, info = env_val.step(action)
         total_reward.append(torch.Tensor(reward))  
 
         # Render environment and store
-        frame = (torch.Tensor(eval_env.render(mode='rgb_array'))*255.).byte()
+        frame = (torch.Tensor(env_val.render(mode='rgb_array'))*255.).byte()
         frames.append(frame)
 
     # Calculate average return
@@ -46,11 +48,11 @@ def save_movie(policy, eval_env):
 
 #_______________________________ SET MODELS AND HYPERPARAMETERS _______________________________
 
-name = 'test_new_script'
+name = 'random_action_baseline_v2'
 
-total_steps = 0.01e6
+total_steps = 10e6
 num_envs = 16
-num_levels = 100
+num_levels = 5
 num_steps = 256
 num_epochs = 3
 n_features = 256
@@ -68,7 +70,7 @@ use_clipped_value = True
 
 # Training and validation env
 env = make_env(num_envs, num_levels=num_levels, use_backgrounds=use_backgrounds)
-eval_env = make_env(num_envs, start_level=num_levels, num_levels=10,  use_backgrounds=use_backgrounds)
+env_val = make_env(num_envs, start_level=num_levels, num_levels=10,  use_backgrounds=use_backgrounds)
 
 # Define models
 if use_impala:
@@ -85,6 +87,7 @@ step_baseline = [8192, 16384, 24576, 32768, 40960, 49152, 57344, 65536, 73728, 8
 
 # Define temporary storage - We use this to collect transitions during each iteration.
 storage = Storage(env.observation_space.shape, num_steps, num_envs)
+storage_val = Storage(env_val.observation_space.shape, num_steps, num_envs)
 
 # Save rewards for plotting purposeses.
 rewards_train = []
@@ -93,11 +96,19 @@ steps = []
 
 # Define environments 
 obs = env.reset()
-obs_val = eval_env.reset()
+obs_val = env_val.reset()
 step = 0
-save_step = 5e5
+save_step = 5e3
 
-
+# Define paths and directories for storing output
+path = os.getcwd()
+work_dir = os.path.join(path, name)
+if not(os.path.isdir(work_dir)):
+    try:
+        os.mkdir(work_dir)
+        os.chdir(work_dir)
+    except:
+        print("Failed to create model folder.")
 
 
 # _______________________________ TRAINING _______________________________
@@ -106,11 +117,23 @@ while step < total_steps:
 
     # Save every half-million step
     if step > save_step:
-        torch.save(policy.state_dict, 'temp_model_' + name + '.pt')
-        save_step += 5e5
 
-    temp_val_rewards = []
+        # Save temporary model
+        torch.save(policy.state_dict, 'temp_model.pt')
+        
+        # Save temporary rewards
+        temp_rewards = {'train_reward': [x.item() for x in rewards_train],
+                'val_reward': [x.item() for x in rewards_val],
+                'steps': [x for x in steps]}
 
+        out_file = open('temp_rewards.json', "w")
+        json.dump(temp_rewards, out_file, indent="")
+        out_file.close()
+
+        # Update temporary saving counter
+        save_step += 5e3
+
+    
     ############## USE POLICY ##############
 
     policy.eval()
@@ -123,11 +146,11 @@ while step < total_steps:
         
         # Take step in environment
         next_obs, reward, done, info = env.step(action)
-        next_obs_val, reward_val, done_val, info_val = eval_env.step(action_val) 
+        next_obs_val, reward_val, done_val, info_val = env_val.step(action_val) 
 
         # Store data
         storage.store(obs, action, reward, done, info, log_prob, value)
-        temp_val_rewards.append(torch.Tensor(reward_val))
+        storage_val.store(obs_val, action_val, reward_val, done_val, info_val, log_prob_val, value_val)
 
         # Update current observation
         obs = next_obs
@@ -193,7 +216,7 @@ while step < total_steps:
     
     # Save rewards for plots.
     rewards_train.append(storage.get_reward(normalized_reward=normalize_reward))
-    rewards_val.append(torch.stack(temp_val_rewards).mean(1).sum(0))
+    rewards_val.append(storage_val.get_reward(normalized_reward=normalize_reward))
     steps.append(step)
 
     # Plot training and validation reward vs baseline.
@@ -214,12 +237,18 @@ while step < total_steps:
     plt.savefig('plot_' + name + '.pdf', bbox_inches='tight')
 
 print('Completed training!')
+
+# Save model.
 torch.save(policy.state_dict, 'model_' + name + '.pt')
 
-save_movie(policy, eval_env)
+# Save rewards.
+temp_dict = {'train_reward': [x.item() for x in rewards_train],
+        'val_reward': [x.item() for x in rewards_val],
+        'steps': [x for x in steps]}
+
+out_file = open('rewards.json', "w")
+json.dump(temp_rewards, out_file, indent="")
+out_file.close()
 
 
-
-
-
-
+save_movie(policy, env_val)
