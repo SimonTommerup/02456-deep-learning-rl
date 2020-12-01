@@ -1,7 +1,0 @@
-Loaded module: python3/3.8.0
-Loaded module: cuda/8.0
-Loaded module: cudnn/v7.0-prod-cuda8
-Loaded module: ffmpeg/4.2.2
-baseline_ppo_v2.py:224: RuntimeWarning: More than 20 figures have been opened. Figures created through the pyplot interface (`matplotlib.pyplot.figure`) are retained until explicitly closed and may consume too much memory. (To control this warning, see the rcParam `figure.max_open_warning`).
-  plt.subplots(figsize=(10,6))
-/zhome/57/c/118453/.lsbatch/1606748028.8458303.shell: line 21: 161565 Killed                  python3 baseline_ppo_v2.py

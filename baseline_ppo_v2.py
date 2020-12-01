@@ -48,11 +48,11 @@ def save_movie(policy, env_val):
 
 #_______________________________ SET MODELS AND HYPERPARAMETERS _______________________________
 
-name = '0_baseline'
+name = '4_500_lvls_impala'
 
 total_steps = 8e6
 num_envs = 32
-num_levels = 10
+num_levels = 500
 num_steps = 256
 num_epochs = 3
 n_features = 256
@@ -64,7 +64,7 @@ entropy_coef = .01
 lr=5e-4
 use_backgrounds = False
 normalize_reward = True
-use_impala = False
+use_impala = True
 use_clipped_value = False
 save_step = 5e5
 
@@ -119,7 +119,7 @@ while step < total_steps:
     if step > save_step:
 
         # Save temporary model
-        torch.save(policy.state_dict, 'temp_model.pt')
+        torch.save(policy.state_dict(), 'temp_model.pt')
         
         # Save temporary rewards
         temp_rewards = {'train_reward': [x.item() for x in rewards_train],
@@ -252,4 +252,4 @@ json.dump(temp_rewards, out_file, indent="")
 out_file.close()
 
 
-save_movie(policy, env_val)
+#save_movie(policy, env_val)
