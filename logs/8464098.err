@@ -1,0 +1,10 @@
+Loaded module: python3/3.8.0
+Loaded module: cuda/8.0
+Loaded module: cudnn/v7.0-prod-cuda8
+Loaded module: ffmpeg/4.2.2
+Traceback (most recent call last):
+  File "baseline_ppo_v2.py", line 193, in <module>
+    for batch in generator:
+  File "/zhome/57/c/118453/DeepLearning/02456-deep-learning-rl/utils.py", line 108, in get_generator
+    value = self.value[:-1].reshape(-1)[indices].cuda()
+KeyboardInterrupt

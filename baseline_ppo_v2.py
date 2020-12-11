@@ -48,10 +48,10 @@ def save_movie(policy, env_val):
 
 #_______________________________ SET MODELS AND HYPERPARAMETERS _______________________________
 
-name = '7_model_5_boss_fight'
-comparison_name = '4_500_lvls_impala'
+name = '9_model_5_coinrun_03e8_steps'
+comparison_name = '9_model_5_coinrun'
 
-total_steps = 8e6
+total_steps = 180224
 num_envs = 32
 num_steps = 256
 num_epochs = 3
@@ -71,7 +71,7 @@ use_impala = True
 num_levels = 500
 use_clipped_value = True
 penalize_on_death = False
-game = 'bossfight'
+game = 'coinrun'
 
 
 # Training and validation env

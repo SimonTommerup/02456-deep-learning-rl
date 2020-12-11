@@ -2,3 +2,29 @@ Loaded module: python3/3.8.0
 Loaded module: cuda/8.0
 Loaded module: cudnn/v7.0-prod-cuda8
 Loaded module: ffmpeg/4.2.2
+Traceback (most recent call last):
+  File "baseline_ppo_v2.py", line 197, in <module>
+    new_dist, new_value = policy(b_obs)
+  File "/zhome/57/c/118453/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 727, in _call_impl
+    result = self.forward(*input, **kwargs)
+  File "/zhome/57/c/118453/DeepLearning/02456-deep-learning-rl/models.py", line 114, in forward
+    x = self.encoder(x)
+  File "/zhome/57/c/118453/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 727, in _call_impl
+    result = self.forward(*input, **kwargs)
+  File "/zhome/57/c/118453/DeepLearning/02456-deep-learning-rl/models.py", line 89, in forward
+    x = self.block3(x)
+  File "/zhome/57/c/118453/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 727, in _call_impl
+    result = self.forward(*input, **kwargs)
+  File "/zhome/57/c/118453/DeepLearning/02456-deep-learning-rl/models.py", line 70, in forward
+    x = self.res2(x)
+  File "/zhome/57/c/118453/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 727, in _call_impl
+    result = self.forward(*input, **kwargs)
+  File "/zhome/57/c/118453/DeepLearning/02456-deep-learning-rl/models.py", line 54, in forward
+    out = self.conv1(out)
+  File "/zhome/57/c/118453/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 727, in _call_impl
+    result = self.forward(*input, **kwargs)
+  File "/zhome/57/c/118453/.local/lib/python3.8/site-packages/torch/nn/modules/conv.py", line 423, in forward
+    return self._conv_forward(input, self.weight)
+  File "/zhome/57/c/118453/.local/lib/python3.8/site-packages/torch/nn/modules/conv.py", line 419, in _conv_forward
+    return F.conv2d(input, weight, self.bias, self.stride,
+KeyboardInterrupt
