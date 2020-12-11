@@ -13,8 +13,6 @@ from tqdm import tqdm
 import models
 import matplotlib.pyplot as plt
 
-
-
 class PolicyLogitsHook():
   def __init__(self, net):
     self.name = "policy"
@@ -30,7 +28,6 @@ class PolicyLogitsHook():
 
   def get_logits(self):
     return self.out[self.name][0]
-
 
 def get_mask(center, size, r):
     y,x = np.ogrid[-center[0]:size[0]-center[0], -center[1]:size[1]-center[1]]
@@ -78,7 +75,8 @@ def gaussian_blur(frame, mask):
 
 def saliency_score(x,y):
     # authors apparently use scores[int(i/d),int(j/d)] = (L-l).pow(2).sum().mul_(.5).data[0]
-    return torch.mean(torch.abs(x-y)**2)
+    #0.5*torch.sum((x-y)**2)
+    return 0.5*torch.sum((x-y)**2)
 
 def saliency_frame(net, hook, logits, frame, pixel_step):
     ps = pixel_step
@@ -101,35 +99,12 @@ def saliency_frame(net, hook, logits, frame, pixel_step):
     # shape is (1,3,64,64)
     return saliency_frame
 
-def saliency_frame_nostep(net, hook, logits, frame):
-    saliency_frame = torch.zeros(size=(1,3,64,64))
-    for idx,_ in enumerate(saliency_frame[0]):
-        for i in range(0, saliency_frame.shape[2]):
-            for j in range(0, saliency_frame.shape[3]):
-                mask = get_mask(center=[i,j], size=[64,64], r=5)
-                blurred_frame = gaussian_blur(frame, mask)
-
-                _, _,_ = net.act(blurred_frame)
-                blurred_logits = hook.get_logits()
-
-                score = saliency_score(logits, blurred_logits)
-                saliency_frame[0][idx][int(i)][int(j)] = score
-
-    return saliency_frame
-
-
 def saliency_mode(saliency_frame, mode):
     if mode == "mean":
         saliency_frame = saliency_frame.mean(dim=1)
     elif mode == "max":
         saliency_frame, _ = torch.max(saliency_frame, dim=1)
     return saliency_frame
-
-def saliency_scaling(saliency_frame):
-    saliency_frame = 1e7**(saliency_frame)
-    saliency_frame = torch.clamp(saliency_frame,min=0,max=255)
-    return saliency_frame
-
 
 def saliency_on_procgen(procgen_frame, saliency_frame, channel, constant, sigma=0):
     sf = saliency_frame.numpy()
@@ -146,59 +121,37 @@ def saliency_on_procgen(procgen_frame, saliency_frame, channel, constant, sigma=
     procgen_frame = procgen_frame.clip(1,255).astype("uint8")
     return procgen_frame
 
-"""
-    pmax = saliency.max()
-    S = imresize(saliency, size=[160,160], interp='bilinear').astype(np.float32)
-    S = S if sigma == 0 else gaussian_filter(S, sigma=sigma)
-    S -= S.min() ; S = fudge_factor*pmax * S / S.max()
-    I = atari.astype('uint16')
-    I[35:195,:,channel] += S.astype('uint16')
-    I = I.clip(1,255).astype('uint8')
-"""
-
-def saliency_move_values(saliency_frame):
-    sf = saliency_frame
-    sfmax = torch.max(sf)
-    sfmin = torch.min(sf)
-    rgb_max = 255
-    rgb_min = 0
-
-    factor = (sfmax-sfmin) / (rgb_max-rgb_min)
-    sf = factor * (sf - rgb_min) + rgb_max
-
-    return sf
-
-
 num_envs = 1
 num_levels = 1
 num_features = 256 
 use_backgrounds=False
 
 if __name__ == "__main__":
-    env = utils.make_env(num_envs, start_level=num_levels, num_levels=num_levels, use_backgrounds=use_backgrounds)
+
+    env = utils.make_env(num_envs, env_name="bossfight", start_level=num_levels, num_levels=num_levels, use_backgrounds=use_backgrounds)
     obs = env.reset()
-    """
-    encoder = models.DQNEncoder(env.observation_space.shape[0], num_features)
-    policy = models.Policy(encoder, num_features, env.action_space.n)
-    policy.load_state_dict(torch.load("2_500_lvls/temp_model.pt"))
-    policy.cuda()
-    policy.eval()
-    """
+
+    # NOTE: 
+    # MODEL 2: DQN
+    # MODEL 5: Impala
+
     #encoder = initial.Encoder(env.observation_space.shape[0], num_features)
     #policy = initial.Policy(encoder, num_features, env.action_space.n)
     #encoder = models.DQNEncoder(env.observation_space.shape[0], num_features)
     encoder = models.ImpalaModel(env.observation_space.shape[0], num_features)
     policy = models.Policy(encoder, num_features, env.action_space.n)
 
-    # encoder = Impala
-    policy.load_state_dict(torch.load("../5_500_lvls_impala_valclip/model_5_500_lvls_impala_valclip.pt"))
+    model_name = "7_model_5_boss_fight"
+    model_path = "../" + model_name + "/model_" + model_name + ".pt"
+
+    policy.load_state_dict(torch.load(model_path))
     policy.cuda()
     policy.eval()
 
     hook = PolicyLogitsHook(policy)
 
     frames = []
-    for _ in tqdm(range(64)):
+    for _ in tqdm(range(16)):
 
         # Use policy on observation on frame
         action,_,_ = policy.act(obs)
@@ -206,36 +159,17 @@ if __name__ == "__main__":
         # Get logits
         logits = hook.get_logits()
 
-        # Get saliency frame
-        #sf = saliency_frame_nostep(net=policy, hook=hook, logits=logits, frame=obs)
+        # Get saliency
         sf = saliency_frame(net=policy, hook=hook, logits=logits, frame=obs, pixel_step=4)
-        sf = saliency_mode(sf, mode="max")
-        #print("S MAX:" , torch.max(sf))
-        #print("S MIN:" , torch.min(sf))
-
-        #sf = saliency_scaling(sf)
-        #sf = saliency_move_values(sf)
-        #sf = upsample_saliency_frame(sf)
-        #print("\n")
-        #print("SF shape:", sf.shape)
-        #print("SF type:", type(sf))
-        #print("S MAX:" , np.max(sf))
-        #print("S MIN:" , np.min(sf))
-
-        # frame of 255s all over, slight proof of concept :-)
-        #rf = red_frame()
-        #print("\n")
-        #print("rf shape:", rf.shape)
-        #print("rf type:", type(rf))
+        mode = "max"
+        sf = saliency_mode(sf, mode=mode)
 
         # Rendering
         frame = env.render(mode="rgb_array")
-        #print("F MAX:" , np.max(frame))
-        #print("F MIN:" , np.max(frame))
 
-        #frame[:,:,0]= frame[:,:,0] + sf
-        #print("FRAME SIZE: ", frame[:,:,0].shape)
-        frame = saliency_on_procgen(frame, sf, channel=0,constant=15, sigma=3)
+        constant = 15
+        sigma = 0
+        frame = saliency_on_procgen(frame, sf, channel=0,constant=constant, sigma=sigma)
 
         # Record frame to frames stack
         frame = (torch.Tensor(frame)).byte()
@@ -245,7 +179,5 @@ if __name__ == "__main__":
         obs,_,_,_ = env.step(action)
 
     frames = torch.stack(frames)
-    imageio.mimsave('vid_' + 'TAME_IMPALA_wSaliencyOnProgcen' + '.mp4', frames, fps=5)
-    
-    print(policy.state_dict)
+    imageio.mimsave(model_name + "_" + f"c={constant}_" + f"sig={sigma}_"+ f"mode={mode}" + ".mp4", frames, fps=5)
 
