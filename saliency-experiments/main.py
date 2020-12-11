@@ -86,7 +86,7 @@ def saliency_frame(net, hook, logits, frame, pixel_step):
         for i in range(0, frame.shape[2], ps):
             for j in range(0, frame.shape[3], ps):
                 mask = get_mask(center=[i,j], size=[64,64], r=5)
-                blurred_frame = gaussian_blur(frame, mask)
+                blurred_frame = gaussian_blur(frame.clone(), mask)
 
                 _, _,_ = net.act(blurred_frame)
                 blurred_logits = hook.get_logits()
@@ -128,7 +128,7 @@ use_backgrounds=False
 
 if __name__ == "__main__":
 
-    env = utils.make_env(num_envs, env_name="bossfight", start_level=num_levels, num_levels=num_levels, use_backgrounds=use_backgrounds)
+    env = utils.make_env(num_envs, env_name="starpilot", start_level=num_levels, num_levels=num_levels, use_backgrounds=use_backgrounds)
     obs = env.reset()
 
     # NOTE: 
@@ -141,7 +141,8 @@ if __name__ == "__main__":
     encoder = models.ImpalaModel(env.observation_space.shape[0], num_features)
     policy = models.Policy(encoder, num_features, env.action_space.n)
 
-    model_name = "7_model_5_boss_fight"
+    #model_name = "7_model_5_boss_fight"
+    model_name = "5_500_lvls_impala_valclip"
     model_path = "../" + model_name + "/model_" + model_name + ".pt"
 
     policy.load_state_dict(torch.load(model_path))
@@ -151,7 +152,7 @@ if __name__ == "__main__":
     hook = PolicyLogitsHook(policy)
 
     frames = []
-    for _ in tqdm(range(16)):
+    for _ in tqdm(range(256)):
 
         # Use policy on observation on frame
         action,_,_ = policy.act(obs)
@@ -167,8 +168,8 @@ if __name__ == "__main__":
         # Rendering
         frame = env.render(mode="rgb_array")
 
-        constant = 15
-        sigma = 0
+        constant = 60
+        sigma = 5
         frame = saliency_on_procgen(frame, sf, channel=0,constant=constant, sigma=sigma)
 
         # Record frame to frames stack
