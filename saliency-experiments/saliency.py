@@ -29,6 +29,7 @@ class PolicyLogitsHook():
   def get_logits(self):
     return self.out[self.name][0]
 
+
 def get_mask(center, size, r):
     y,x = np.ogrid[-center[0]:size[0]-center[0], -center[1]:size[1]-center[1]]
     keep = x*x + y*y <= 1
@@ -53,9 +54,6 @@ def upsample_saliency_frame(saliency_frame):
     LO_RES_SIZE = 64
     HI_RES_SIZE = 512
     ndarr = saliency_frame.numpy()
-    #print("NDARR SHAPE:", ndarr.shape)
-    #ndarr = np.reshape(ndarr, (LO_RES_SIZE,LO_RES_SIZE))
-    # astype or not?
     ndarr = cv2.resize(ndarr[0], dsize=(HI_RES_SIZE,HI_RES_SIZE), interpolation=cv2.INTER_LINEAR).astype(np.float32)
     return ndarr
 
@@ -74,8 +72,6 @@ def gaussian_blur(frame, mask):
     return frame
 
 def saliency_score(x,y):
-    # authors apparently use scores[int(i/d),int(j/d)] = (L-l).pow(2).sum().mul_(.5).data[0]
-    #0.5*torch.sum((x-y)**2)
     return 0.5*torch.sum((x-y)**2)
 
 def saliency_frame(net, hook, logits, frame, pixel_step):
@@ -86,7 +82,7 @@ def saliency_frame(net, hook, logits, frame, pixel_step):
         for i in range(0, frame.shape[2], ps):
             for j in range(0, frame.shape[3], ps):
                 mask = get_mask(center=[i,j], size=[64,64], r=5)
-                blurred_frame = gaussian_blur(frame, mask)
+                blurred_frame = gaussian_blur(frame.clone(), mask)
 
                 _, _,_ = net.act(blurred_frame)
                 blurred_logits = hook.get_logits()
@@ -96,7 +92,6 @@ def saliency_frame(net, hook, logits, frame, pixel_step):
     
 
     saliency_frame = F.interpolate(saliency_frame, size=(64,64), mode="bilinear")
-    # shape is (1,3,64,64)
     return saliency_frame
 
 def saliency_mode(saliency_frame, mode):
@@ -128,7 +123,7 @@ use_backgrounds=False
 
 if __name__ == "__main__":
 
-    env = utils.make_env(num_envs, env_name="bossfight", start_level=num_levels, num_levels=num_levels, use_backgrounds=use_backgrounds)
+    env = utils.make_env(num_envs, env_name="starpilot", start_level=num_levels, num_levels=num_levels, use_backgrounds=use_backgrounds)
     obs = env.reset()
 
     # NOTE: 
@@ -141,7 +136,8 @@ if __name__ == "__main__":
     encoder = models.ImpalaModel(env.observation_space.shape[0], num_features)
     policy = models.Policy(encoder, num_features, env.action_space.n)
 
-    model_name = "7_model_5_boss_fight"
+    #model_name = "7_model_5_boss_fight"
+    model_name = "5_500_lvls_impala_valclip"
     model_path = "../" + model_name + "/model_" + model_name + ".pt"
 
     policy.load_state_dict(torch.load(model_path))
@@ -151,7 +147,7 @@ if __name__ == "__main__":
     hook = PolicyLogitsHook(policy)
 
     frames = []
-    for _ in tqdm(range(16)):
+    for _ in tqdm(range(1)):
 
         # Use policy on observation on frame
         action,_,_ = policy.act(obs)
@@ -167,7 +163,7 @@ if __name__ == "__main__":
         # Rendering
         frame = env.render(mode="rgb_array")
 
-        constant = 15
+        constant = 60
         sigma = 5
         frame = saliency_on_procgen(frame, sf, channel=0,constant=constant, sigma=sigma)
 
@@ -180,4 +176,5 @@ if __name__ == "__main__":
 
     frames = torch.stack(frames)
     imageio.mimsave(model_name + "_" + f"c={constant}_" + f"sig={sigma}_"+ f"mode={mode}" + ".mp4", frames, fps=5)
+
 
