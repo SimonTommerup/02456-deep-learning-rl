@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import utils
 from utils import make_env, Storage, orthogonal_init
 import matplotlib.pyplot as plt
 from IPython.display import clear_output
@@ -51,15 +52,49 @@ class Policy(nn.Module):
 
     return dist, value
 
+num_envs = 1
+num_levels = 1
+num_features = 256 
+use_backgrounds=False
+
+
+class PolicyHook():
+  def __init__(self, net, mode):
+    self.name = mode
+    self.module = net._modules[self.name]
+    self.out = {}
+    self._rgsthk(self.module)
+
+  def _rgsthk(self, module):
+    self.module.register_forward_hook(self.hook_fn)
+
+  def hook_fn(self, module, input, output):
+    self.out[self.name] = output
+
+  def get_logits(self):
+    return self.out[self.name][0]
+
 if __name__ == "__main__":
-  total_steps = 2e6
-  num_envs = 32
-  num_levels = 10
-  num_steps = 256
-  num_epochs = 3
-  batch_size = 512
-  eps = .2
-  grad_eps = .5
-  value_coef = .5
-  entropy_coef = .01
-  use_backgrounds = True
+      env = utils.make_env(num_envs, env_name="starpilot", start_level=num_levels, num_levels=num_levels, use_backgrounds=use_backgrounds)
+      obs = env.reset()
+
+      encoder = Encoder(env.observation_space.shape[0], num_features)
+      policy = Policy(encoder, num_features, env.action_space.n)
+      policy.cuda()
+      policy.eval()
+      phook = PolicyHook(policy, mode="policy")
+      vhook = PolicyHook(policy, mode="value")
+
+      # Use policy on observation on frame
+      action,_,_ = policy.act(obs)
+
+      # Get logits
+      logits = phook.get_logits()
+      value = vhook.get_logits()
+
+      print(logits)
+      print("LenLogits:", len(logits))
+
+      print(value)
+      print("LenLogits:", len(value))
+      

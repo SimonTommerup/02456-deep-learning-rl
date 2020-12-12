@@ -29,6 +29,7 @@ class PolicyLogitsHook():
   def get_logits(self):
     return self.out[self.name][0]
 
+
 def get_mask(center, size, r):
     y,x = np.ogrid[-center[0]:size[0]-center[0], -center[1]:size[1]-center[1]]
     keep = x*x + y*y <= 1
