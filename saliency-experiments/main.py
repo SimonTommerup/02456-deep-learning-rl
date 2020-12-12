@@ -54,9 +54,6 @@ def upsample_saliency_frame(saliency_frame):
     LO_RES_SIZE = 64
     HI_RES_SIZE = 512
     ndarr = saliency_frame.numpy()
-    #print("NDARR SHAPE:", ndarr.shape)
-    #ndarr = np.reshape(ndarr, (LO_RES_SIZE,LO_RES_SIZE))
-    # astype or not?
     ndarr = cv2.resize(ndarr[0], dsize=(HI_RES_SIZE,HI_RES_SIZE), interpolation=cv2.INTER_LINEAR).astype(np.float32)
     return ndarr
 
@@ -75,8 +72,6 @@ def gaussian_blur(frame, mask):
     return frame
 
 def saliency_score(x,y):
-    # authors apparently use scores[int(i/d),int(j/d)] = (L-l).pow(2).sum().mul_(.5).data[0]
-    #0.5*torch.sum((x-y)**2)
     return 0.5*torch.sum((x-y)**2)
 
 def saliency_frame(net, hook, logits, frame, pixel_step):
@@ -97,7 +92,6 @@ def saliency_frame(net, hook, logits, frame, pixel_step):
     
 
     saliency_frame = F.interpolate(saliency_frame, size=(64,64), mode="bilinear")
-    # shape is (1,3,64,64)
     return saliency_frame
 
 def saliency_mode(saliency_frame, mode):
@@ -153,7 +147,7 @@ if __name__ == "__main__":
     hook = PolicyLogitsHook(policy)
 
     frames = []
-    for _ in tqdm(range(256)):
+    for _ in tqdm(range(1)):
 
         # Use policy on observation on frame
         action,_,_ = policy.act(obs)
@@ -182,4 +176,5 @@ if __name__ == "__main__":
 
     frames = torch.stack(frames)
     imageio.mimsave(model_name + "_" + f"c={constant}_" + f"sig={sigma}_"+ f"mode={mode}" + ".mp4", frames, fps=5)
+
 
