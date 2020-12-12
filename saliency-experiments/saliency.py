@@ -119,7 +119,7 @@ def saliency_on_procgen(procgen_frame, saliency_frame, channel, constant, sigma=
 num_envs = 1
 num_levels = 1
 num_features = 256 
-use_backgrounds=False
+use_backgrounds=True
 
 if __name__ == "__main__":
 
@@ -132,8 +132,8 @@ if __name__ == "__main__":
 
     #encoder = initial.Encoder(env.observation_space.shape[0], num_features)
     #policy = initial.Policy(encoder, num_features, env.action_space.n)
-    encoder = models.DQNEncoder(env.observation_space.shape[0], num_features)
-    #encoder = models.ImpalaModel(env.observation_space.shape[0], num_features)
+    #encoder = models.DQNEncoder(env.observation_space.shape[0], num_features)
+    encoder = models.ImpalaModel(env.observation_space.shape[0], num_features)
     policy = models.Policy(encoder, num_features, env.action_space.n)
 
     # BOSS FIGHT
@@ -146,7 +146,10 @@ if __name__ == "__main__":
 
     # STAR PILOT
     #model_name = "5_500_lvls_impala_valclip" #done
-    model_name = "2_500_lvls"
+    #model_name = "2_500_lvls"
+
+    # STAR PILOT WITH BACKGROUND
+    model_name = "12_model_5_starpilot"
 
     # BIG FISH
     # model_name = "10_model_2_bigfish" # done
