@@ -83,7 +83,7 @@ def saliency_frame(net, hook, logits, frame, pixel_step):
             for j in range(0, frame.shape[3], ps):
                 mask = get_mask(center=[i,j], size=[64,64], r=5)
                 blurred_frame = gaussian_blur(frame.clone(), mask)
-
+                #plt.imshow(blurred_frame[0].reshape(64,64,3))
                 _, _,_ = net.act(blurred_frame)
                 blurred_logits = hook.get_logits()
 
@@ -119,11 +119,11 @@ def saliency_on_procgen(procgen_frame, saliency_frame, channel, constant, sigma=
 num_envs = 1
 num_levels = 1
 num_features = 256 
-use_backgrounds=True
+use_backgrounds=False
 
 if __name__ == "__main__":
 
-    env = utils.make_env(num_envs, env_name="starpilot", start_level=num_levels, num_levels=num_levels, use_backgrounds=use_backgrounds)
+    env = utils.make_env(num_envs, env_name="coinrun", start_level=num_levels, num_levels=num_levels, use_backgrounds=use_backgrounds)
     obs = env.reset()
 
     # NOTE: 
@@ -149,7 +149,9 @@ if __name__ == "__main__":
     #model_name = "2_500_lvls"
 
     # STAR PILOT WITH BACKGROUND
-    model_name = "12_model_5_starpilot"
+    #model_name = "12_model_5_starpilot"
+
+    model_name = "9_model_5_coinrun_c2=01"
 
     # BIG FISH
     # model_name = "10_model_2_bigfish" # done
@@ -157,7 +159,8 @@ if __name__ == "__main__":
 
 
 
-    model_path = "../" + model_name + "/model_" + model_name + ".pt"
+    #model_path = "../" + model_name + "/model_" + model_name + ".pt"
+    model_path = "../" + model_name + "/" + "temp_model" + ".pt"
     policy.load_state_dict(torch.load(model_path))
     policy.cuda()
     policy.eval()
