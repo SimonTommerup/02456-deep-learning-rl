@@ -168,7 +168,7 @@ if __name__ == "__main__":
         frame = env.render(mode="rgb_array")
 
         constant = 15
-        sigma = 0
+        sigma = 5
         frame = saliency_on_procgen(frame, sf, channel=0,constant=constant, sigma=sigma)
 
         # Record frame to frames stack

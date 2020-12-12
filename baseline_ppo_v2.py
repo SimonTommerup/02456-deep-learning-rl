@@ -48,10 +48,10 @@ def save_movie(policy, env_val):
 
 #_______________________________ SET MODELS AND HYPERPARAMETERS _______________________________
 
-name = '9_model_5_coinrun_03e8_steps'
+name = '9_model_5_coinrun_c2=01'
 comparison_name = '9_model_5_coinrun'
 
-total_steps = 180224
+total_steps = 8e6
 num_envs = 32
 num_steps = 256
 num_epochs = 3
@@ -60,7 +60,7 @@ batch_size = 512
 eps = .2
 grad_eps = .5
 value_coef = .5
-entropy_coef = .01
+entropy_coef = .01*10
 lr=5e-4
 use_backgrounds = False
 save_step = 5e5
