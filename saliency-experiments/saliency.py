@@ -132,14 +132,29 @@ if __name__ == "__main__":
 
     #encoder = initial.Encoder(env.observation_space.shape[0], num_features)
     #policy = initial.Policy(encoder, num_features, env.action_space.n)
-    #encoder = models.DQNEncoder(env.observation_space.shape[0], num_features)
-    encoder = models.ImpalaModel(env.observation_space.shape[0], num_features)
+    encoder = models.DQNEncoder(env.observation_space.shape[0], num_features)
+    #encoder = models.ImpalaModel(env.observation_space.shape[0], num_features)
     policy = models.Policy(encoder, num_features, env.action_space.n)
 
-    #model_name = "7_model_5_boss_fight"
-    model_name = "5_500_lvls_impala_valclip"
-    model_path = "../" + model_name + "/model_" + model_name + ".pt"
+    # BOSS FIGHT
+    #model_name = "7_model_5_boss_fight" # done
+    #model_name = "6_model_2_boss_fight" # done
 
+    # COIN RUN
+    # model_name = "9_model_5_coinrun"  # done
+    #model_name = "8_model_2_coinrun" #done
+
+    # STAR PILOT
+    #model_name = "5_500_lvls_impala_valclip" #done
+    model_name = "2_500_lvls"
+
+    # BIG FISH
+    # model_name = "10_model_2_bigfish" # done
+    # model_name = "11_model_5_bigfish" # done
+
+
+
+    model_path = "../" + model_name + "/model_" + model_name + ".pt"
     policy.load_state_dict(torch.load(model_path))
     policy.cuda()
     policy.eval()
@@ -147,7 +162,7 @@ if __name__ == "__main__":
     hook = PolicyLogitsHook(policy)
 
     frames = []
-    for _ in tqdm(range(1)):
+    for _ in tqdm(range(128)):
 
         # Use policy on observation on frame
         action,_,_ = policy.act(obs)
