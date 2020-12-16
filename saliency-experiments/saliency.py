@@ -151,7 +151,7 @@ if __name__ == "__main__":
     # STAR PILOT WITH BACKGROUND
     #model_name = "12_model_5_starpilot"
 
-    model_name = "9_model_5_coinrun_c2=01"
+    model_name = "9_model_5_coinrun_03e8_steps"
 
     # BIG FISH
     # model_name = "10_model_2_bigfish" # done
@@ -159,8 +159,8 @@ if __name__ == "__main__":
 
 
 
-    #model_path = "../" + model_name + "/model_" + model_name + ".pt"
-    model_path = "../" + model_name + "/" + "temp_model" + ".pt"
+    model_path = "../" + model_name + "/model_" + model_name + ".pt"
+    #model_path = "../" + model_name + "/" + "temp_model" + ".pt"
     policy.load_state_dict(torch.load(model_path))
     policy.cuda()
     policy.eval()
