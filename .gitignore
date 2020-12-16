@@ -2,3 +2,7 @@ __pycache__
 jobscript.sh
 .vscode
 __pycache*
+9_model_5*
+logs*
+*.err
+*.out
