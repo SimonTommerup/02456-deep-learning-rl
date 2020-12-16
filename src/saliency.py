@@ -1,17 +1,19 @@
-import gym
 import procgen
-import utils
-import initial
-import torch
-import imageio
-import numpy as np
-from scipy.ndimage.filters import gaussian_filter
-from torchvision.transforms import Resize
-import torch.nn.functional as F
 import cv2
-from tqdm import tqdm
+import torch
+import os
+import numpy as np
 import models
+import utils
+
 import matplotlib.pyplot as plt
+import torch.nn.functional as F
+
+from scipy.ndimage.filters import gaussian_filter
+from tqdm import tqdm
+
+
+
 
 class PolicyLogitsHook():
   def __init__(self, net):
@@ -50,18 +52,6 @@ def channel_to_tensor(ndarr):
     tensor = tensor.view(1,1,size,size)
     return tensor
 
-def upsample_saliency_frame(saliency_frame):
-    LO_RES_SIZE = 64
-    HI_RES_SIZE = 512
-    ndarr = saliency_frame.numpy()
-    ndarr = cv2.resize(ndarr[0], dsize=(HI_RES_SIZE,HI_RES_SIZE), interpolation=cv2.INTER_LINEAR).astype(np.float32)
-    return ndarr
-
-def red_frame():
-    rf = np.ones((512,512))
-    rf = rf * 255.
-    return rf
-
 def gaussian_blur(frame, mask):
     for idx,_ in enumerate(frame):
         channel = frame[0][idx]
@@ -83,14 +73,13 @@ def saliency_frame(net, hook, logits, frame, pixel_step):
             for j in range(0, frame.shape[3], ps):
                 mask = get_mask(center=[i,j], size=[64,64], r=5)
                 blurred_frame = gaussian_blur(frame.clone(), mask)
-                #plt.imshow(blurred_frame[0].reshape(64,64,3))
+
                 _, _,_ = net.act(blurred_frame)
                 blurred_logits = hook.get_logits()
-
                 score = saliency_score(logits, blurred_logits)
+
                 saliency_frame[0][idx][int(i/ps)][int(j/ps)] = score
     
-
     saliency_frame = F.interpolate(saliency_frame, size=(64,64), mode="bilinear")
     return saliency_frame
 
@@ -116,51 +105,44 @@ def saliency_on_procgen(procgen_frame, saliency_frame, channel, constant, sigma=
     procgen_frame = procgen_frame.clip(1,255).astype("uint8")
     return procgen_frame
 
+def color_to_channel(color):
+    colors = ["red", "green", "blue"]
+    assert color in colors, "Color must be red, green or blue (RGB)"
+    channel = [idx for idx, elem in enumerate(colors) if color==elem][0]
+    return channel
+
+def get_full_path(model_name):
+    _cwd = os.getcwd()
+    os.chdir("../experiments")
+    _mdir = os.path.join(os.getcwd(), model_name)
+    _modelpath = os.path.join(_mdir, "model_" + model_name + ".pt")
+    os.chdir(_cwd)
+    return _modelpath
+
+# Settings
+env_name = "starpilot"
 num_envs = 1
 num_levels = 1
 num_features = 256 
 use_backgrounds=False
 
-if __name__ == "__main__":
 
-    env = utils.make_env(num_envs, env_name="coinrun", start_level=num_levels, num_levels=num_levels, use_backgrounds=use_backgrounds)
+if __name__ == "__main__":
+    
+    env = utils.make_env(num_envs, env_name=env_name, start_level=num_levels, num_levels=num_levels, use_backgrounds=use_backgrounds)
     obs = env.reset()
 
     # NOTE: 
-    # MODEL 2: DQN
-    # MODEL 5: Impala
+    # Comment in the right encoder:
+    # MODEL 2 = DQN
+    # MODEL 5 = Impala
 
-    #encoder = initial.Encoder(env.observation_space.shape[0], num_features)
-    #policy = initial.Policy(encoder, num_features, env.action_space.n)
     #encoder = models.DQNEncoder(env.observation_space.shape[0], num_features)
     encoder = models.ImpalaModel(env.observation_space.shape[0], num_features)
     policy = models.Policy(encoder, num_features, env.action_space.n)
 
-    # BOSS FIGHT
-    #model_name = "7_model_5_boss_fight" # done
-    #model_name = "6_model_2_boss_fight" # done
-
-    # COIN RUN
-    # model_name = "9_model_5_coinrun"  # done
-    #model_name = "8_model_2_coinrun" #done
-
-    # STAR PILOT
-    #model_name = "5_500_lvls_impala_valclip" #done
-    #model_name = "2_500_lvls"
-
-    # STAR PILOT WITH BACKGROUND
-    #model_name = "12_model_5_starpilot"
-
-    model_name = "9_model_5_coinrun_03e8_steps"
-
-    # BIG FISH
-    # model_name = "10_model_2_bigfish" # done
-    # model_name = "11_model_5_bigfish" # done
-
-
-
-    model_path = "../" + model_name + "/model_" + model_name + ".pt"
-    #model_path = "../" + model_name + "/" + "temp_model" + ".pt"
+    model_folder = "5_500_lvls_impala_valclip"
+    model_path = get_full_path(model_folder)
     policy.load_state_dict(torch.load(model_path))
     policy.cuda()
     policy.eval()
@@ -186,7 +168,9 @@ if __name__ == "__main__":
 
         constant = 60
         sigma = 5
-        frame = saliency_on_procgen(frame, sf, channel=0,constant=constant, sigma=sigma)
+        channel = color_to_channel("red")
+
+        frame = saliency_on_procgen(frame, sf, channel=channel, constant=constant, sigma=sigma)
 
         # Record frame to frames stack
         frame = (torch.Tensor(frame)).byte()
@@ -196,6 +180,6 @@ if __name__ == "__main__":
         obs,_,_,_ = env.step(action)
 
     frames = torch.stack(frames)
-    imageio.mimsave(model_name + "_" + f"c={constant}_" + f"sig={sigma}_"+ f"mode={mode}" + ".mp4", frames, fps=5)
+    imageio.mimsave(env_name + "_" + model_folder + "_" + f"c={constant}_" + f"sig={sigma}_"+ f"mode={mode}" + ".mp4", frames, fps=5)
 
 
