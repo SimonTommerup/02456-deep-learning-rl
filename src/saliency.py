@@ -1,19 +1,15 @@
 import procgen
 import cv2
+import imageio
 import torch
 import os
 import numpy as np
 import models
 import utils
-
 import matplotlib.pyplot as plt
 import torch.nn.functional as F
-
 from scipy.ndimage.filters import gaussian_filter
 from tqdm import tqdm
-
-
-
 
 class PolicyLogitsHook():
   def __init__(self, net):
@@ -150,7 +146,7 @@ if __name__ == "__main__":
     hook = PolicyLogitsHook(policy)
 
     frames = []
-    for _ in tqdm(range(128)):
+    for _ in tqdm(range(1)):
 
         # Use policy on observation on frame
         action,_,_ = policy.act(obs)
