@@ -146,7 +146,7 @@ if __name__ == "__main__":
     hook = PolicyLogitsHook(policy)
 
     frames = []
-    for _ in tqdm(range(1)):
+    for _ in tqdm(range(256)):
 
         # Use policy on observation on frame
         action,_,_ = policy.act(obs)
@@ -156,6 +156,8 @@ if __name__ == "__main__":
 
         # Get saliency
         sf = saliency_frame(net=policy, hook=hook, logits=logits, frame=obs, pixel_step=4)
+
+        # Set saliency mode
         mode = "max"
         sf = saliency_mode(sf, mode=mode)
 
@@ -165,7 +167,6 @@ if __name__ == "__main__":
         constant = 60
         sigma = 5
         channel = color_to_channel("red")
-
         frame = saliency_on_procgen(frame, sf, channel=channel, constant=constant, sigma=sigma)
 
         # Record frame to frames stack
@@ -176,6 +177,7 @@ if __name__ == "__main__":
         obs,_,_,_ = env.step(action)
 
     frames = torch.stack(frames)
-    imageio.mimsave(env_name + "_" + model_folder + "_" + f"c={constant}_" + f"sig={sigma}_"+ f"mode={mode}" + ".mp4", frames, fps=5)
+    video_path = env_name + "_" + model_folder + "_" + f"c={constant}_" + f"sig={sigma}_"+ f"mode={mode}" + ".mp4"
+    imageio.mimsave(video_path, frames, fps=5)
 
 
