@@ -35,7 +35,7 @@ A couple of dependencies you might want to be aware of, when running this projec
 - procgen 0.10.4
 - gym 0.17.3
 
-You can make a virtual environment and run `pip install -r requirements.txt` and be up to speed quickly.
+You can make a virtual environment and run `pip install -r requirements.txt` to install all dependencies. 
 
 ### Training code
 The training code is located in ``src/train.py``. You can play around with the different variables and hyperparameters in the beginning of the script to reproduce our results. The script is not yet fully optimised for others to easily use this, as this way of structuring the code made our experiments more easy. However, it should be fairly easy to navigate in the script. Before you run the ``train.py``, then:
