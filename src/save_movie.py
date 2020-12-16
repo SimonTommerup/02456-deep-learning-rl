@@ -58,19 +58,19 @@ print("Loading model")
 
 
 # Set values for comparison
-path = os.getcwd()
+path = os.getcwd()  + "/experiments/"
 model_dir = name + "/model_" + name + ".pt"
 print("PATH IS: ", path)
 print("Model dir: ", model_dir)
 
 
-policy.load_state_dict(torch.load(model_dir))
+policy.load_state_dict(torch.load(path + model_dir))
 policy.cuda()
 
 
 
 
-################## Save movie
+################## Save the movie ##################
 
 
 obs = env_val.reset()

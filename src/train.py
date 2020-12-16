@@ -18,22 +18,23 @@ from models import ImpalaModel, DQNEncoder, Policy
 name = '9_model_5_coinrun_long_train_c2=0.015_lr=3e-4'
 comparison_name = '9_model_5_coinrun'
 
+
+# Hyper parameters and experiment variables
 total_steps = 32e6
 num_envs = 32
 num_steps = 256
 num_epochs = 3
 n_features = 256
 batch_size = 512
-eps = .2
 grad_eps = .5
 value_coef = .5
 entropy_coef = .015
-lr=3e-4   # 5e-4   
-use_backgrounds = False
 save_step = 5e5
 normalize_reward = True
 
-# Experiments
+eps = .2
+use_backgrounds = False
+lr=3e-4   # 5e-4   
 gamma = 0.99
 use_impala = True
 num_levels = 500
@@ -41,6 +42,8 @@ use_clipped_value = True
 penalize_on_death = False
 game = 'coinrun'
 
+
+#_______________________________ Initialize environment and model _______________________________
 
 # Training and validation env
 env = make_env(num_envs, env_name=game, num_levels=num_levels, use_backgrounds=use_backgrounds)
@@ -85,15 +88,17 @@ obs_val = env_val.reset()
 step = 0
 
 # Define paths and directories for storing output
-path = os.getcwd()
+path = os.getcwd() + "/experiments"
 work_dir = os.path.join(path, name)
 if not(os.path.isdir(work_dir)):
     try:
         os.mkdir(work_dir)
     except:
         print("Failed to create model folder.")
-os.chdir(work_dir)
+else:
+    print("Directory exists. Overwriting data in directory!")
 
+os.chdir(work_dir)
 
 # _______________________________ TRAINING _______________________________
 

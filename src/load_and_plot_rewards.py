@@ -10,7 +10,7 @@ def plot_experiments(experiments, colors, title):
         #path = os.getcwd()
         #compare_dir = os.path.join(path, exp)
 
-        with open(path + "/temp_rewards.json") as json_file:
+        with open("experiments/" + path + "/rewards.json") as json_file:
             data = json.load(json_file)
             rewards_val = data['val_reward']
             steps = data['steps']
