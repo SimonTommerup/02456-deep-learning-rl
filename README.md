@@ -25,7 +25,15 @@ To aid this exploration, the gradients of the encoder network have been
 used to visualize which pixels play a role in the model.
 
 ## About this repo
+This repo is an implementation of the PPO algorithm from this [paper](https://arxiv.org/pdf/1707.06347.pdf) and saliency maps based on this [paper](https://arxiv.org/pdf/1711.00138.pdf)
 
+
+### Dependencies
+A couple of dependencies you might want to be aware of, when running this project:
+- GPUs supporting CUDA with 16GB RAM (less might be sufficient)
+- torch 1.7.0
+- procgen 0.10.4
+- gym 0.17.3
 
 ### Training code
 The training code is located in ``src/train.py``. You can play around with the different variables and hyperparameters in the beginning of the script to reproduce our results. The script is not yet fully optimised for others to easily use this, as this way of structuring the code made our experiments more easy. However, it should be fairly easy to navigate in the script. Before you run the ``train.py``, then:
