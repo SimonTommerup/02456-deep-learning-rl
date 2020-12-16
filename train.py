@@ -13,45 +13,12 @@ from tqdm import tqdm
 from models import ImpalaModel, DQNEncoder, Policy
 
 
-def save_movie(policy, env_val):
-    obs = env_val.reset()
-
-    frames = []
-    total_reward = []
-
-    # Evaluate policy
-    policy.eval()
-                    
-    for _ in tqdm(range(512)):
-
-        # Use policy
-        action, log_prob, value = policy.act(obs)
-
-        # Take step in environment
-        obs, reward, done, info = env_val.step(action)
-        total_reward.append(torch.Tensor(reward))  
-
-        # Render environment and store
-        frame = (torch.Tensor(env_val.render(mode='rgb_array'))*255.).byte()
-        frames.append(frame)
-
-    # Calculate average return
-    total_reward = torch.stack(total_reward).sum(0).mean(0)
-    print('Average return:', total_reward)
-
-    # Save frames as video
-    frames = torch.stack(frames)
-    imageio.mimsave('vid_' + name + '.mp4', frames, fps=25)
-
-
-
-
 #_______________________________ SET MODELS AND HYPERPARAMETERS _______________________________
 
-name = '9_model_5_coinrun_c2=01'
+name = '9_model_5_coinrun_long_train_c2=0.015_lr=3e-4'
 comparison_name = '9_model_5_coinrun'
 
-total_steps = 8e6
+total_steps = 32e6
 num_envs = 32
 num_steps = 256
 num_epochs = 3
@@ -60,13 +27,14 @@ batch_size = 512
 eps = .2
 grad_eps = .5
 value_coef = .5
-entropy_coef = .01*10
-lr=5e-4
+entropy_coef = .015
+lr=3e-4   # 5e-4   
 use_backgrounds = False
 save_step = 5e5
 normalize_reward = True
 
 # Experiments
+gamma = 0.99
 use_impala = True
 num_levels = 500
 use_clipped_value = True
@@ -103,8 +71,8 @@ else:
 
 
 # Define temporary storage - We use this to collect transitions during each iteration.
-storage = Storage(env.observation_space.shape, num_steps, num_envs)
-storage_val = Storage(env_val.observation_space.shape, num_steps, num_envs)
+storage = Storage(env.observation_space.shape, num_steps, num_envs, gamma=gamma)
+storage_val = Storage(env_val.observation_space.shape, num_steps, num_envs, gamma=gamma)
 
 # Save rewards for plotting purposeses.
 rewards_train = []
@@ -271,4 +239,3 @@ json.dump(temp_rewards, out_file, indent="")
 out_file.close()
 
 
-#save_movie(policy, env_val)
