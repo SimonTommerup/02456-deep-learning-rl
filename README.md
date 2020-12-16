@@ -76,7 +76,7 @@ In the script itself you will need to
 
 You can control which color channel the saliency maps should be added to by changing the variable `channel` by given input either "red", "green" or "blue" to the function `color_to_channel`. Also you are able to control the scaling `constant` that controls the color intensity and the value `sigma` controlling the value of the standard deviation of an optional Gaussian filter on the frames during the creation of the video. If `sigma = 0` then no Gaussian filter is used. Finally you can adjust if you want the saliency scores to be computed as the mean or max across the color channels by setting `mode` equal to `mean` or `max`.
 
-Your video will be saved to `src` as `env_name` + `model_folder` along with a specificiation of the settings used to make the video. If you use the same game, model and settings twice be advised that the old video will be replaced by the new unless you customize the file path string.
+Your video will be saved to `src` as `env_name` + `model_folder` along with a specificiation of the settings used to make the video. If you use the same game, model and settings twice be advised that the old video will be replaced by the new unless you customize the variable `video_path` in the bottom of the script.
 
 ## Acknowledgements
 It should be mentioned that train.py is based on a notebook created by Nicklas Hansen - TA in the Deep Learning Course at DTU, 02456.
