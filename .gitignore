@@ -1,7 +1,6 @@
 __pycache__
 jobscript.sh
 .vscode/
-settings.json
 __pycache*
 9_model_5*
 logs*
