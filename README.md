@@ -37,11 +37,10 @@ A couple of dependencies you might want to be aware of, when running this projec
 
 You can make a virtual environment locally and run
 
-|---|---|
-|---|---|
+|unix/macOS| python -m pip install -r requirements.txt |
+|Windows| py -m pip install -r requirements.txt |
 
 
-1. python -m pip install -r requirements.txt 
 
 ### Training code
 The training code is located in ``src/train.py``. You can play around with the different variables and hyperparameters in the beginning of the script to reproduce our results. The script is not yet fully optimised for others to easily use this, as this way of structuring the code made our experiments more easy. However, it should be fairly easy to navigate in the script. Before you run the ``train.py``, then:
