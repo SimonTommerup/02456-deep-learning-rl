@@ -64,8 +64,19 @@ For all conducted experiments with a folder, you can plot and compare them using
 
 
 ### Producing videos with saliency maps
-@Simon!
+`src/saliency.py` allows recording videos with saliency scores added to one of the color channels. 
 
+Change the variable `env_name` to one of the games in the Procgen suite. Examples are "starpilot", "coinrun" and "bigfish". 
+
+In the script itself you will need to 
+
+1. Comment in the appropriate encoder with is dependent on which model will be in the video. As stated above model 5's will use the Impala encoder, where as model 2's will use the DQN encoder. 
+
+2. Change the variable `model_folder` to one of the folders containing the trained model that will be in the video. 
+
+You can control which color channel the saliency maps should be added to by changing the variable `channel` by given input either "red", "green" or "blue" to the function `color_to_channel`. Also you are able to control the scaling `constant` that controls the color intensity and the value `sigma` controlling the value of the standard deviation of an optional Gaussian filter on the frames during the creation of the video. If `sigma = 0` then no Gaussian filter is used. Finally you can adjust if you want the saliency scores to be computed as the mean or max across the color channels by setting `mode` equal to `mean` or `max`.
+
+Your video will be saved to `src` as `env_name` + `model_folder` along with a specificiation of the settings used to make the video. If you use the same game, model and settings twice be advised that the old video will be replaced by the new unless you customize the file path string.
 
 ## Acknowledgements
 It should be mentioned that train.py is based on a notebook created by Nicklas Hansen - TA in the Deep Learning Course at DTU, 02456.
