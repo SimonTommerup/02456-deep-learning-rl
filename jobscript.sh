@@ -4,7 +4,7 @@
 #BSUB -J coinrun_eps=01
 #BSUB -n 1
 #BSUB -W 24:00
-#BSUB -u tdheshe@hotmail.com
+#BSUB -u email@email.com
 #BSUB -B
 #BSUB -N
 #BSUB -R "rusage[mem=16GB]"
