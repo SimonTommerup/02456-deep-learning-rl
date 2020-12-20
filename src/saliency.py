@@ -116,7 +116,7 @@ def get_full_path(model_name):
     return _modelpath
 
 # Settings
-env_name = "starpilot"
+env_name = "coinrun"
 num_envs = 1
 start_level = 1
 num_levels = 1
@@ -134,12 +134,13 @@ if __name__ == "__main__":
     # MODEL 2 = DQN
     # MODEL 5 = Impala
 
-    encoder = models.DQNEncoder(env.observation_space.shape[0], num_features)
-    #encoder = models.ImpalaModel(env.observation_space.shape[0], num_features)
+    #encoder = models.DQNEncoder(env.observation_space.shape[0], num_features)
+    encoder = models.ImpalaModel(env.observation_space.shape[0], num_features)
     policy = models.Policy(encoder, num_features, env.action_space.n)
 
     #model_folder = "5_500_lvls_impala_valclip"
-    model_folder = "0_baseline"
+    #model_folder = "0_baseline"
+    model_folder = "9_model_5_coinrun_03e8_steps"
     model_path = get_full_path(model_folder)
     policy.load_state_dict(torch.load(model_path))
     policy.cuda()
