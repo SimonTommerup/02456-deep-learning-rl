@@ -43,7 +43,7 @@ The training code is located in ``src/train.py``. You can play around with the d
 - set ``comparison_name`` to a folder name in ``experiments`` to compare rewards in a plot during training 
 - change hyper parameters in the beginning of the script to your desired ones
 
-We ran the code through an available DTU server using ``jobscript.sh``. **Please run the code from the root folder.**
+We ran the code through an available DTU server using ``jobscript.sh``. You must add an e-mail to receive the results. **Please run the code from the root folder.**
 
 ### Models
 The different implemented models used for policy, encoder and value function can be found in ``src/models.py``.
