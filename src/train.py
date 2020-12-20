@@ -15,8 +15,8 @@ from models import ImpalaModel, DQNEncoder, Policy
 
 #_______________________________ SET MODELS AND HYPERPARAMETERS _______________________________
 
-name = 'baseline'
-comparison_name =  "NONE" # '9_model_5_coinrun'
+name = '4_500_lvls_impala_valcoef=0.1'
+comparison_name =  "4_500_lvls_impala" # '9_model_5_coinrun'
 
 
 # Hyper parameters and experiment variables
@@ -27,7 +27,7 @@ num_epochs = 3
 n_features = 256
 batch_size = 512
 grad_eps = .5
-value_coef = .5
+value_coef = .1
 entropy_coef = .01
 save_step = 5e5
 normalize_reward = True
@@ -36,8 +36,8 @@ eps = .2
 use_backgrounds = False
 lr=5e-4   # 5e-4   
 gamma = 0.99 # 0.99
-use_impala = False
-num_levels = 10 # 500
+use_impala = True
+num_levels = 500 # 500
 use_clipped_value = False
 penalize_on_death = False
 game = 'starpilot'
