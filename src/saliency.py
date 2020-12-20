@@ -166,8 +166,8 @@ if __name__ == "__main__":
         # Rendering
         frame = env.render(mode="rgb_array")
 
-        constant = 5
-        sigma = 0
+        constant = 60
+        sigma = 5
         channel = color_to_channel("red")
         frame = saliency_on_procgen(frame, sf, channel=channel, constant=constant, sigma=sigma)
 
@@ -179,7 +179,7 @@ if __name__ == "__main__":
         obs,_,_,_ = env.step(action)
 
     frames = torch.stack(frames)
-    video_path = env_name + "_" + model_folder + "_" + f"c={constant}_" + f"sig={sigma}_"+ f"mode={mode}" + ".mp4"
+    video_path = env_name + "_" + model_folder + "_" + f"level_played={start_level}" + "_" + f"c={constant}_" + f"sig={sigma}_"+ f"mode={mode}" + ".mp4"
     imageio.mimsave(video_path, frames, fps=5)
 
 
