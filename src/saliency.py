@@ -93,12 +93,12 @@ def saliency_on_procgen(procgen_frame, saliency_frame, channel, constant, sigma=
     if sigma==0:
         sf = sf
     else:
-        gaussian_filter(sf, sigma)
+        sf = gaussian_filter(sf, sigma)
     
     sf -= sf.min()
     sf = constant * sfmax * sf / sf.max()
-    procgen_frame[:,:,channel] += sf.astype("uint16")
-    procgen_frame = procgen_frame.clip(1,255).astype("uint8")
+    procgen_frame[:,:,channel] += sf.astype("uint64") 
+    procgen_frame = procgen_frame.clip(1,255).astype("uint8") 
     return procgen_frame
 
 def color_to_channel(color):
@@ -118,6 +118,7 @@ def get_full_path(model_name):
 # Settings
 env_name = "starpilot"
 num_envs = 1
+start_level = 1
 num_levels = 1
 num_features = 256 
 use_backgrounds=False
@@ -125,7 +126,7 @@ use_backgrounds=False
 
 if __name__ == "__main__":
     
-    env = utils.make_env(num_envs, env_name=env_name, start_level=num_levels, num_levels=num_levels, use_backgrounds=use_backgrounds)
+    env = utils.make_env(num_envs, env_name=env_name, start_level=start_level, num_levels=num_levels, use_backgrounds=use_backgrounds)
     obs = env.reset()
 
     # NOTE: 
@@ -133,11 +134,12 @@ if __name__ == "__main__":
     # MODEL 2 = DQN
     # MODEL 5 = Impala
 
-    #encoder = models.DQNEncoder(env.observation_space.shape[0], num_features)
-    encoder = models.ImpalaModel(env.observation_space.shape[0], num_features)
+    encoder = models.DQNEncoder(env.observation_space.shape[0], num_features)
+    #encoder = models.ImpalaModel(env.observation_space.shape[0], num_features)
     policy = models.Policy(encoder, num_features, env.action_space.n)
 
-    model_folder = "5_500_lvls_impala_valclip"
+    #model_folder = "5_500_lvls_impala_valclip"
+    model_folder = "0_baseline"
     model_path = get_full_path(model_folder)
     policy.load_state_dict(torch.load(model_path))
     policy.cuda()
@@ -146,7 +148,7 @@ if __name__ == "__main__":
     hook = PolicyLogitsHook(policy)
 
     frames = []
-    for _ in tqdm(range(256)):
+    for _ in tqdm(range(128)):
 
         # Use policy on observation on frame
         action,_,_ = policy.act(obs)
@@ -164,8 +166,8 @@ if __name__ == "__main__":
         # Rendering
         frame = env.render(mode="rgb_array")
 
-        constant = 60
-        sigma = 5
+        constant = 5
+        sigma = 0
         channel = color_to_channel("red")
         frame = saliency_on_procgen(frame, sf, channel=channel, constant=constant, sigma=sigma)
 
