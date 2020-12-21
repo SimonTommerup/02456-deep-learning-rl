@@ -70,7 +70,7 @@ def saliency_frame(net, hook, logits, frame, pixel_step):
                 mask = get_mask(center=[i,j], size=[64,64], r=5)
                 blurred_frame = gaussian_blur(frame.clone(), mask)
 
-                _, _,_ = net.act(blurred_frame)
+                _,_,_ = net.act(blurred_frame)
                 blurred_logits = hook.get_logits()
                 score = saliency_score(logits, blurred_logits)
 
