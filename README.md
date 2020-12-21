@@ -46,11 +46,11 @@ The training code is located in ``src/train.py``. You can play around with the d
 We ran the code through an available DTU server using ``jobscript.sh``. You must add an e-mail to receive the results. **Please run the code from the root folder.**
 
 ### Evaluation
-Note that you can use one of our pretrained models to evalute. Find these in the experiment folder. Each model is associated with a pdf showing the training performance (see section below). The best performing model in the starpilot environment is located in [experiment no. 5](https://github.com/SimonTommerup/02456-deep-learning-rl/tree/main/experiments/5_500_lvls_impala_valclip). It acheives a validation reward of ~19 and a video including its attention (using saliency maps) can be seen here:
+Note that you can use one of our pretrained models to evalute. Find these in the experiment folder. Each model is associated with a pdf showing the training performance (see section below). The best performing model in the starpilot environment is located in [experiment no. 5](https://github.com/SimonTommerup/02456-deep-learning-rl/tree/main/experiments/5_500_lvls_impala_valclip). It acheives a mean validation reward of ~19. A video of its performance (including attention using saliency maps) can be seen here:
 
 [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/BVxv4tF7RNg/0.jpg)](https://youtu.be/BVxv4tF7RNg)
 
-You can generate the same video by running **NOTEBOOK COMING SOON** using the [model (model_5_500_lvls_impala_valclip.pt)](https://github.com/SimonTommerup/02456-deep-learning-rl/blob/main/experiments/5_500_lvls_impala_valclip/model_5_500_lvls_impala_valclip.pt) from the above refered folder.
+You can generate the same video by running **NOTEBOOK COMING SOON** using the [model_5_500_lvls_impala_valclip.pt](https://github.com/SimonTommerup/02456-deep-learning-rl/blob/main/experiments/5_500_lvls_impala_valclip/model_5_500_lvls_impala_valclip.pt) from the above refered folder.
 
 
 ### Overview of experiments
