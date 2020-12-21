@@ -69,7 +69,7 @@ The different implemented models used for policy, encoder and value function can
 
 
 ### Plotting reward data
-For all conducted experiments with a folder, you can plot and compare them using the ``load_and_plot_rewards.py`` to compare performances. Use an interactive python kernel for this!
+For all conducted experiments with a folder, you can plot and compare them using the ``load_and_plot_rewards.py`` to compare performances.
 
 
 
@@ -88,5 +88,3 @@ You can control which color channel the saliency maps should be added to by chan
 
 Your video will be saved to `src` as `env_name` + `model_folder` along with a specificiation of the settings used to make the video. If you use the same game, model and settings twice be advised that the old video will be replaced by the new unless you customize the variable `video_path` in the bottom of the script.
 
-## Acknowledgements
-It should be mentioned that train.py is based on a notebook created by Nicklas Hansen - TA in the Deep Learning Course at DTU, 02456.
