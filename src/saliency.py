@@ -88,7 +88,6 @@ def saliency_mode(saliency_frame, mode):
 
 def saliency_on_procgen(procgen_frame, saliency_frame, channel, constant, sigma=0):
     sf = saliency_frame.numpy()
-    sfmax = sf.max()
     sf = cv2.resize(sf[0], dsize=(512,512), interpolation=cv2.INTER_LINEAR).astype(np.float32)
     if sigma==0:
         sf = sf
@@ -96,7 +95,8 @@ def saliency_on_procgen(procgen_frame, saliency_frame, channel, constant, sigma=
         sf = gaussian_filter(sf, sigma)
     
     sf -= sf.min()
-    sf = constant * sfmax * sf / sf.max()
+    sf /= sf.max()
+    sf = constant * sf
     procgen_frame[:,:,channel] += sf.astype("uint64") 
     procgen_frame = procgen_frame.clip(1,255).astype("uint8") 
     return procgen_frame
@@ -116,9 +116,9 @@ def get_full_path(model_name):
     return _modelpath
 
 # Settings
-env_name = "coinrun"
+env_name = "starpilot"
 num_envs = 1
-start_level = 1
+start_level = 1 
 num_levels = 1
 num_features = 256 
 use_backgrounds=False
@@ -138,9 +138,9 @@ if __name__ == "__main__":
     encoder = models.ImpalaModel(env.observation_space.shape[0], num_features)
     policy = models.Policy(encoder, num_features, env.action_space.n)
 
-    #model_folder = "5_500_lvls_impala_valclip"
+    model_folder = "5_500_lvls_impala_valclip"
     #model_folder = "0_baseline"
-    model_folder = "9_model_5_coinrun_03e8_steps"
+    #model_folder = "9_model_5_coinrun_03e8_steps"
     model_path = get_full_path(model_folder)
     policy.load_state_dict(torch.load(model_path))
     policy.cuda()
@@ -149,7 +149,8 @@ if __name__ == "__main__":
     hook = PolicyLogitsHook(policy)
 
     frames = []
-    for _ in tqdm(range(128)):
+    no_frames = 128 
+    for _ in tqdm(range(no_frames)):
 
         # Use policy on observation on frame
         action,_,_ = policy.act(obs)
@@ -167,7 +168,7 @@ if __name__ == "__main__":
         # Rendering
         frame = env.render(mode="rgb_array")
 
-        constant = 60
+        constant = 100
         sigma = 5
         channel = color_to_channel("red")
         frame = saliency_on_procgen(frame, sf, channel=channel, constant=constant, sigma=sigma)

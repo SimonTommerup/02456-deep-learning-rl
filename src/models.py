@@ -130,11 +130,11 @@ use_backgrounds=False
 if __name__ == "__main__":
   import utils
   env = utils.make_env(num_envs, env_name=env_name, start_level=start_level, num_levels=num_levels, use_backgrounds=use_backgrounds)
-  #encoder = DQNEncoder(env.observation_space.shape[0], num_features)    
-  encoder = ImpalaModel(env.observation_space.shape[0], num_features)
+  encoder = DQNEncoder(env.observation_space.shape[0], num_features)    
+  #encoder = ImpalaModel(env.observation_space.shape[0], num_features)
   policy = Policy(encoder, num_features, env.action_space.n)
 
   def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
   
-  print(count_parameters(policy))
+  print(count_parameters(encoder))
