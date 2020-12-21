@@ -46,10 +46,9 @@ The training code is located in ``src/train.py``. You can play around with the d
 We ran the code through an available DTU server using ``jobscript.sh``. You must add an e-mail to receive the results. **Please run the code from the root folder.**
 
 ### Evaluation
-Note that you can use one of our pretrained models to evalute. Find these in the experiment folder. Each model is associated with a pdf showing the training performance (see section below). The best performing model in starpilot is located in experiment no. 5.
+Note that you can use one of our pretrained models to evalute. Find these in the experiment folder. Each model is associated with a pdf showing the training performance (see section below). The best performing model in the starpilot environment is located in experiment no. 5. It acheives a validation reward of ~19 and a video including its attention (using saliency maps) can be seen below:
+https://www.youtube.com/watch?v=BVxv4tF7RNg&list=PLkbW0eq7D8E3lFVVCWjSPHGQRNFMzm8Fz&index=2
 
-
-![Test Image 5](https://github.com/SimonTommerup/02456-deep-learning-rl/blob/main/experiments/5_500_lvls_impala_valclip/plot_5_500_lvls_impala_valclip.pdf)
 
 You can visit **NOTEBOOK COMING SOON** to run a model for a couple of steps. 
 
