@@ -46,7 +46,9 @@ The training code is located in ``src/train.py``. You can play around with the d
 We ran the code through an available DTU server using ``jobscript.sh``. You must add an e-mail to receive the results. **Please run the code from the root folder.**
 
 ### Evaluation
-Note that you can use one of our pretrained models to evalute. Find these in the experiment folder. Each model is associated with a pdf showing the training performance (see section below). The best performing model in the starpilot environment is located in experiment no. 5. It acheives a validation reward of ~19 and a video including its attention (using saliency maps) can be seen below:
+Note that you can use one of our pretrained models to evalute. Find these in the experiment folder. Each model is associated with a pdf showing the training performance (see section below). The best performing model in the starpilot environment is located in experiment no. 5. It acheives a validation reward of ~19 and a video including its attention (using saliency maps) can be seen here: https://youtu.be/BVxv4tF7RNg
+
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/https://youtu.be/BVxv4tF7RNg)](https://youtu.be/BVxv4tF7RNg)
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/BVxv4tF7RNg" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
