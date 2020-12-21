@@ -37,7 +37,7 @@ A couple of dependencies you might want to be aware of, when running this projec
 
 You can make a virtual environment and run `pip install -r src/requirements.txt` to install all dependencies. 
 
-### Training code
+### Training
 The training code is located in ``src/train.py``. You can play around with the different variables and hyperparameters in the beginning of the script to reproduce our results. The script is not yet fully optimised for others to easily use this, as this way of structuring the code made our experiments more easy. However, it should be fairly easy to navigate in the script. Before you run the ``train.py``, then:
 - change ``name``to a desired name for your experiment. Your experiment will be saved to the ``experiments``folder.
 - set ``comparison_name`` to a folder name in ``experiments`` to compare rewards in a plot during training 
@@ -45,8 +45,12 @@ The training code is located in ``src/train.py``. You can play around with the d
 
 We ran the code through an available DTU server using ``jobscript.sh``. You must add an e-mail to receive the results. **Please run the code from the root folder.**
 
-### Models
-The different implemented models used for policy, encoder and value function can be found in ``src/models.py``.
+### Evaluation
+Note that you can use one of our pretrained models to evalute. Find these in the experiment folder. Each model is associated with a pdf showing the training performance (see section below). The best performing model in the starpilot environment is located in [experiment no. 5](https://github.com/SimonTommerup/02456-deep-learning-rl/tree/main/experiments/5_500_lvls_impala_valclip). It acheives a mean validation reward of ~19. A video of its performance (including attention using saliency maps) can be seen here:
+
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/BVxv4tF7RNg/0.jpg)](https://youtu.be/BVxv4tF7RNg)
+
+You can generate the same video by running **NOTEBOOK COMING SOON** using the [model_5_500_lvls_impala_valclip.pt](https://github.com/SimonTommerup/02456-deep-learning-rl/blob/main/experiments/5_500_lvls_impala_valclip/model_5_500_lvls_impala_valclip.pt) from the above refered folder.
 
 
 ### Overview of experiments
@@ -60,8 +64,12 @@ A couple of experiments are included in the ``experiments`` folder. The naming c
 If you want to know more about the experiments, check out our paper!
 
 
+### Architectures of Models
+The different implemented models used for policy, encoder and value function can be found in ``src/models.py``.
+
+
 ### Plotting reward data
-For all conducted experiments with a folder, you can plot and compare them using the ``load_and_plot_rewards.py`` to compare performances. Use an interactive python kernel for this!
+For all conducted experiments with a folder, you can plot and compare them using the ``load_and_plot_rewards.py`` to compare performances.
 
 
 
@@ -80,5 +88,3 @@ You can control which color channel the saliency maps should be added to by chan
 
 Your video will be saved to `src` as `env_name` + `model_folder` along with a specificiation of the settings used to make the video. If you use the same game, model and settings twice be advised that the old video will be replaced by the new unless you customize the variable `video_path` in the bottom of the script.
 
-## Acknowledgements
-It should be mentioned that train.py is based on a notebook created by Nicklas Hansen - TA in the Deep Learning Course at DTU, 02456.
