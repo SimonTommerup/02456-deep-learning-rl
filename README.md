@@ -37,7 +37,7 @@ A couple of dependencies you might want to be aware of, when running this projec
 
 You can make a virtual environment and run `pip install -r src/requirements.txt` to install all dependencies. 
 
-### Training code
+### Training
 The training code is located in ``src/train.py``. You can play around with the different variables and hyperparameters in the beginning of the script to reproduce our results. The script is not yet fully optimised for others to easily use this, as this way of structuring the code made our experiments more easy. However, it should be fairly easy to navigate in the script. Before you run the ``train.py``, then:
 - change ``name``to a desired name for your experiment. Your experiment will be saved to the ``experiments``folder.
 - set ``comparison_name`` to a folder name in ``experiments`` to compare rewards in a plot during training 
@@ -45,8 +45,10 @@ The training code is located in ``src/train.py``. You can play around with the d
 
 We ran the code through an available DTU server using ``jobscript.sh``. You must add an e-mail to receive the results. **Please run the code from the root folder.**
 
-### Models
-The different implemented models used for policy, encoder and value function can be found in ``src/models.py``.
+### Evaluation
+Note that you can use one of our pretrained models to evalute. Find these in the experiment folder. Each model is associated with a pdf showing the training performance (see section below). The best performing model in starpilot is located in experiment no. 5.
+
+You can visit **NOTEBOOK COMING SOON** to run a model for a couple of steps. 
 
 
 ### Overview of experiments
@@ -58,6 +60,10 @@ A couple of experiments are included in the ``experiments`` folder. The naming c
 - etc...
 
 If you want to know more about the experiments, check out our paper!
+
+
+### Architectures of Models
+The different implemented models used for policy, encoder and value function can be found in ``src/models.py``.
 
 
 ### Plotting reward data
