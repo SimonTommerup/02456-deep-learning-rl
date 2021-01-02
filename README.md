@@ -50,7 +50,7 @@ Note that you can use one of our pretrained models to evalute. Find these in the
 
 [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/BVxv4tF7RNg/0.jpg)](https://youtu.be/BVxv4tF7RNg)
 
-You can generate the same video by running (this notebook)[https://github.com/SimonTommerup/02456-deep-learning-rl/blob/main/02456_RL_EvaluateAndVisualizeModels.ipynb] using the [model_5_500_lvls_impala_valclip.pt](https://github.com/SimonTommerup/02456-deep-learning-rl/blob/main/experiments/5_500_lvls_impala_valclip/model_5_500_lvls_impala_valclip.pt) from the above refered folder.
+You can generate the same video by running [this notebook](https://github.com/SimonTommerup/02456-deep-learning-rl/blob/main/02456_RL_EvaluateAndVisualizeModels.ipynb) using the [model_5_500_lvls_impala_valclip.pt](https://github.com/SimonTommerup/02456-deep-learning-rl/blob/main/experiments/5_500_lvls_impala_valclip/model_5_500_lvls_impala_valclip.pt) from the above refered folder.
 
 
 ### Overview of experiments
